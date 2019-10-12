@@ -8,13 +8,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class TransferImpl extends TransferPOA
 {
     private ORB orb;
     private Map<String,String[]> files = new HashMap<>();
-
+    private ArrayList<String> clientesOnline = new ArrayList<>();
 
     public void setORB(ORB orb_val) {
         orb=orb_val;
@@ -53,6 +54,30 @@ class TransferImpl extends TransferPOA
     }
 
     @Override
+    public boolean login(String user) {
+        if (clientesOnline.isEmpty()) {
+            clientesOnline.add(user);
+            return true;
+        } else {
+            if (clientesOnline.contains(user)) {
+                return false;
+            } else {
+                clientesOnline.add(user);
+                return true;
+            }
+        }
+    }
+
+    @Override
+    public void logout(String user) {
+        clientesOnline.remove(user);
+        System.out.println("Total de clientes online = ["+getTotalOfClients()+"]");
+        if (clientesOnline.isEmpty()) {
+            shutdown();
+        }
+    }
+
+    @Override
     public String[] requisitarListaDeArquivos(String user) {
         ArrayList<String> todosOsArquivos = new ArrayList<String>();
         files.entrySet().forEach(entry->{
@@ -63,6 +88,10 @@ class TransferImpl extends TransferPOA
             }
         });
         return getStringArray(todosOsArquivos);
+    }
+
+    public int getTotalOfClients() {
+        return clientesOnline.toArray().length;
     }
 
     private static String[] getStringArray(ArrayList<String> arr)
@@ -91,6 +120,9 @@ class TransferImpl extends TransferPOA
 
     public void shutdown()
     {
-        orb.shutdown(false);
+        if (clientesOnline.isEmpty()) {
+            orb.shutdown(false);
+        }
+
     }
 }

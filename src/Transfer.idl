@@ -4,6 +4,8 @@ module TransferApp {
     interface Transfer {
         string transfer(in string file1);
         boolean enviarListaDeArquivos(in string user,in PathList list);
+        boolean login(in string user);
+        void logout(in string user);
         PathList requisitarListaDeArquivos(in string user);
         oneway void shutdown();
     };

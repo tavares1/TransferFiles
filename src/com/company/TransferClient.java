@@ -59,7 +59,7 @@ class FileManager {
 public class TransferClient
 {
     static Transfer transferImpl;
-
+    static boolean logged = false;
     public static void main (String args[])
 
     {
@@ -74,11 +74,24 @@ public class TransferClient
             transferImpl = TransferHelper.narrow(ncRef.resolve_str(name));
             System.out.println("obtained a handle on server object \n" + transferImpl);
 
-            //            Recebendo o apelido do cliente.
-            System.out.println("Qual o seu nickname? :");
+
+            //            Verificando se é possivel o usuário se logar.
+
+            System.out.println("Nickname :");
             java.io.DataInputStream in=new java.io.DataInputStream(System.in);
             String nickName = in.readLine();
-            System.out.println("Olá "+nickName+"!\n\n");
+
+            while (!logged) {
+                boolean result = transferImpl.login(nickName);
+                if (result) {
+                    System.out.println("Olá " + nickName + "!\n\n");
+                    logged = true;
+                } else {
+                    System.out.println("Nickname já está sendo utilizado, tente outro: \n");
+                    java.io.DataInputStream segundaTentativa =new java.io.DataInputStream(System.in);
+                    nickName = in.readLine();
+                }
+            }
 
             //            Recebendo o caminho da pasta compartilhada do cliente.
             System.out.println("Qual o caminho da pasta compartilhada? :");
@@ -103,15 +116,15 @@ public class TransferClient
                 }
             }
 
-//            Fazer esperar pra sair
+            //            Fazer esperar pra sair
 
             System.out.println("Digite S para sair do programa");
-            java.io.DataInputStream sair =new java.io.DataInputStream(System.in);
+            java.io.DataInputStream sair = new java.io.DataInputStream(System.in);
             String c=in.readLine();
 
             if(c.equalsIgnoreCase("s"))
             {
-                transferImpl.shutdown();
+                transferImpl.logout(nickName);
             }
 
         }
