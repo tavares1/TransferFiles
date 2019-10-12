@@ -52,6 +52,34 @@ class TransferImpl extends TransferPOA
         return true;
     }
 
+    @Override
+    public String[] requisitarListaDeArquivos(String user) {
+        ArrayList<String> todosOsArquivos = new ArrayList<String>();
+        files.entrySet().forEach(entry->{
+            if (!entry.getKey().equalsIgnoreCase(user)) {
+                for (String path : files.get(entry.getKey())) {
+                    todosOsArquivos.add(path);
+                }
+            }
+        });
+        return getStringArray(todosOsArquivos);
+    }
+
+    private static String[] getStringArray(ArrayList<String> arr)
+    {
+
+        String str[] = new String[arr.size()];
+
+        Object[] objArr = arr.toArray();
+
+        int i = 0;
+        for (Object obj : objArr) {
+            str[i++] = (String)obj;
+        }
+
+        return str;
+    }
+
     public void printMap() {
         files.entrySet().forEach(entry->{
             System.out.println(entry.getKey());
