@@ -1,9 +1,48 @@
 package com.company;
 
 import java.io.*;
+import java.lang.Object;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import TransferApp.*;
 import org.omg.CosNaming.*;
 import org.omg.CORBA.*;
+
+class FileManager {
+    final File folder = new File("/Users/lucastavares/files_of_folder");
+
+    private static ArrayList<String> listFilesForFolder(final File folder) {
+        ArrayList <String> filesNames = new ArrayList<String>();
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                listFilesForFolder(fileEntry);
+            } else {
+                filesNames.add(fileEntry.getName());
+            }
+        }
+        return filesNames;
+    }
+
+    private static String[] getStringArray(ArrayList<String> arr)
+    {
+
+        String str[] = new String[arr.size()];
+
+        Object[] objArr = arr.toArray();
+
+        int i = 0;
+        for (Object obj : objArr) {
+            str[i++] = (String)obj;
+        }
+
+        return str;
+    }
+
+    public String[] getFiles() {
+        return getStringArray(listFilesForFolder(folder));
+    }
+}
 
 public class TransferClient
 {
@@ -13,44 +52,18 @@ public class TransferClient
 
     {
         try {
+
+//            Conexão com o servidor central.
             ORB orb=ORB.init(args,null);
-
-            /* Get a CORBA object reference to NameServer   */
             org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-
             NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
-
             String name="Transfer";
-
-            /*get an object reference to the Hello Server and narrow it to Hello Object*/
-            transferImpl=TransferHelper.narrow(ncRef.resolve_str(name));
-
+            transferImpl = TransferHelper.narrow(ncRef.resolve_str(name));
             System.out.println("obtained a handle on server object \n" + transferImpl);
-            System.out.println("Do you want to open or save the file?(o/s)");
-            java.io.DataInputStream in = new java.io.DataInputStream(System.in);
-
-            String c= in.readLine();
-
-            /*Open the contents of the file*/
-            if(c.equalsIgnoreCase("o"))
-            {
-                System.out.println("Contents of the file....");
-                System.out.println();
-                System.out.println(transferImpl.transfer(args[0]));
-            }
-
-            /*Transfer the file contents to the specified location */
-            if(c.equalsIgnoreCase("s"))
-            {
-                System.out.println("Specify the path to store the file : ");
-                String sPath=in.readLine(); //Input the destination path
-                FileOutputStream fout = new FileOutputStream(sPath);
-                //Write the file contents to the new file created
-                new PrintStream(fout).println (transferImpl.transfer(args[0]));
-                fout.close();
-                System.out.println("File transferred to the specified location...");
-            }
-            transferImpl.shutdown(); //invoke shutdown method
+//            Enviando arquivos locais para o servidor.
+            FileManager fm = new FileManager();
+            transferImpl.enviarListaDeArquivos("tavares", fm.getFiles());
+//            Recebendo a lista de todos os arquivos do servidor.
         }
         catch(Exception e)
         {

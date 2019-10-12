@@ -1,6 +1,9 @@
+typedef sequence<string> PathList;
+
 module TransferApp {
     interface Transfer {
         string transfer(in string file1);
+        boolean enviarListaDeArquivos(in string user,in PathList list);
         oneway void shutdown();
     };
  };
