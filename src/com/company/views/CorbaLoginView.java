@@ -22,6 +22,8 @@ public class CorbaLoginView {
         this.pane = new StackPane();
     }
 
+
+    //TODO criar acao do botao de login
     public void createCorbaViewScene(){
         VBox corbaScreen = new VBox();
         GridPane loginForm = new GridPane();
