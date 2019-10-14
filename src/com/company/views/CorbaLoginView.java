@@ -9,7 +9,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class CorbaView  {
+public class CorbaLoginView {
 
     private Scene scene;
     private StackPane pane;
@@ -18,7 +18,7 @@ public class CorbaView  {
     private TextField path;
     private Button createClient;
 
-    public CorbaView(){
+    public CorbaLoginView(){
         this.pane = new StackPane();
     }
 
