@@ -75,7 +75,7 @@ public class TransferClient
 
     public void connectWithCentralServer() {
         try {
-            //            Conexão com o servidor central.
+            //Conexão com o servidor central.
             String[] port = new String[]{"-ORBInitialPort", clientPort};
             ORB orb = ORB.init(port, null);
             org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");

@@ -33,8 +33,6 @@ public class CorbaLoginView {
         this.pane = new StackPane();
     }
 
-
-    //TODO criar acao do botao de login
     public void createCorbaViewScene(final Stage stage){
         VBox corbaScreen = new VBox();
         GridPane loginForm = new GridPane();
@@ -50,18 +48,14 @@ public class CorbaLoginView {
         Label actualPath = new Label("C:/");
         Button chooseFolderButton = new Button("Selecionar a pasta compartilhada");
 
-        chooseFolderButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                DirectoryChooser directoryChooser = new DirectoryChooser();
-                File selectedDirectory = directoryChooser.showDialog(stage);
-
-                if(selectedDirectory == null){
-                    //No Directory selected
-                }else{
-                    System.out.println(selectedDirectory.getAbsolutePath());
-                    actualPath.setText(selectedDirectory.getAbsolutePath());
-                }
+        chooseFolderButton.setOnAction(event -> {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            File selectedDirectory = directoryChooser.showDialog(stage);
+            if(selectedDirectory == null){
+                //No Directory selected
+            }else{
+                System.out.println(selectedDirectory.getAbsolutePath());
+                actualPath.setText(selectedDirectory.getAbsolutePath());
             }
         });
 
@@ -71,25 +65,18 @@ public class CorbaLoginView {
         loginForm.add(porta, 1, 2);
         loginForm.add(chooseFolderButton, 0,3);
         loginForm.add(actualPath, 1,3);
-
         loginForm.setMinSize(400, 200);
-
-        //Setting the padding
         loginForm.setPadding(new Insets(10, 10, 10, 10));
-
-        //Setting the vertical and horizontal gaps between the columns
         loginForm.setVgap(5);
         loginForm.setHgap(5);
 
         createClient = new Button("Create");
-        createClient.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                TransferClient client = new TransferClient(nickname.getText(), actualPath.getText(), porta.getText());
-                TransferFilesAppViewController transferVC = new TransferFilesAppViewController(stage, client);
-                transferVC.create();
-            }
+        createClient.setOnAction(event -> {
+            TransferClient client = new TransferClient(nickname.getText(), actualPath.getText(), porta.getText());
+            TransferFilesAppViewController transferVC = new TransferFilesAppViewController(stage, client);
+            transferVC.create();
         });
+
         corbaScreen.setAlignment(Pos.CENTER);
         corbaScreen.getChildren().addAll(title, loginForm, createClient);
         this.pane.getChildren().add(corbaScreen);

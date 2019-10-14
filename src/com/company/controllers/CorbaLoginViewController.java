@@ -1,7 +1,6 @@
 package com.company.controllers;
 
 import com.company.views.CorbaLoginView;
-import com.company.views.TransferFilesApp;
 import javafx.stage.Stage;
 
 public class CorbaLoginViewController {

@@ -4,14 +4,10 @@ import TransferApp.TransferPOA;
 import TransferApp.UserFiles;
 import org.omg.CORBA.ORB;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 class TransferImpl extends TransferPOA
 {

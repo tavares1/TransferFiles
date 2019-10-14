@@ -26,7 +26,7 @@ public class TransferServer
             String name="Transfer";
             NameComponent path[]=ncRef.to_name(name);
             ncRef.rebind(path,href);
-            System.out.println("TransferServer ready and wating");
+            System.out.println("TransferServer ready and waiting");
             orb.run(); //Waits until an invocation comes from ORB client
         }
         catch(Exception e)

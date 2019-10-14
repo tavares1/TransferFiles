@@ -8,9 +8,14 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        CorbaLoginViewController corbaLoginViewController = new CorbaLoginViewController(primaryStage);
-        corbaLoginViewController.create();
+        try{
+            CorbaLoginViewController corbaLoginViewController = new CorbaLoginViewController(primaryStage);
+            corbaLoginViewController.create();
+        } catch (Exception e){
+            throw new Exception(e);
+        }
     }
+
     public static void main(String args[]){
         launch(args);
     }
