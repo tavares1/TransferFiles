@@ -2,6 +2,7 @@ package com.company.views;
 
 import TransferApp.UserFiles;
 import com.company.controllers.TransferFilesAppViewController;
+import com.company.controllers.FileModalDownloadViewController;
 import com.company.transfers.TransferClient;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -105,6 +106,23 @@ public class TransferFilesApp {
             System.out.println("Deu ruim");
             //tableViewServer.setPlaceholder(new Label("Nenhum arquivo para ser baixado."));
         }
+
+//        ADD EVENT LISTINER
+
+        tableViewServer.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                FileModel model = (FileModel) newValue;
+                FileModalDownloadViewController fileModalVC = new FileModalDownloadViewController(stage, client, model);
+                fileModalVC.create();
+            }
+        });
+
+        VBox vbox = new VBox(title,tableView,title2,tableViewServer);
+
+        vbox.prefWidthProperty().bind(stage.widthProperty().multiply(0.80));
+
+        this.pane.getChildren().add(vbox);
+
     }
 
 

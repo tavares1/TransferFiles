@@ -46,8 +46,8 @@ class FileManager {
         return getStringArray(listFilesForFolder(folder));
     }
 
-    public void writeFileToFolder(String file) throws IOException {
-        FileOutputStream fout = new FileOutputStream(folder+"/\teste.txt");
+    public void writeFileToFolder(String file, String filename) throws IOException {
+        FileOutputStream fout = new FileOutputStream(folder+"/"+filename);
         //Write the file contents to the new file created
         new PrintStream(fout).println (file);
         fout.close();
@@ -124,5 +124,14 @@ public class TransferClient
         return name;
     }
 
+    public void downloadFile(String path, String filename) {
+        String file = transferImpl.transfer(path);
+        try {
+            fileManager.writeFileToFolder(file, filename);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
 }
 
