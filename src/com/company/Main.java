@@ -1,7 +1,17 @@
 package com.company;
 
-public class Main {
+import com.company.controllers.CorbaLoginViewController;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
-    public static void main(String[] args) {
+public class Main extends Application {
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        CorbaLoginViewController corbaLoginViewController = new CorbaLoginViewController(primaryStage);
+        corbaLoginViewController.create();
+    }
+    public static void main(String args[]){
+        launch(args);
     }
 }
