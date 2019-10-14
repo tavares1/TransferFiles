@@ -59,78 +59,65 @@ public class TransferClient
 {
     static Transfer transferImpl;
     static boolean logged = false;
-    public static void main (String args[])
+    private String name;
+    private String folderPath;
+    private FileManager fileManager;
 
-    {
+    public TransferClient(String nickname, String path) {
+        name = nickname;
+        folderPath = path;
+        fileManager = new FileManager(path);
+    }
+
+    public void connectWithCentralServer(String clientPort) {
         try {
-
             //            Conexão com o servidor central.
-
-            ORB orb=ORB.init(args,null);
+            String[] port = new String[]{"-ORBInitialPort", clientPort};
+            ORB orb = ORB.init(port, null);
             org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
             NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
-            String name="Transfer";
+            String name = "Transfer";
             transferImpl = TransferHelper.narrow(ncRef.resolve_str(name));
             System.out.println("obtained a handle on server object \n" + transferImpl);
-
-
-            //            Verificando se é possivel o usuário se logar.
-
-            System.out.println("Nickname :");
-            java.io.DataInputStream in=new java.io.DataInputStream(System.in);
-            String nickName = in.readLine();
-
-            while (!logged) {
-                boolean result = transferImpl.login(nickName);
-                if (result) {
-                    System.out.println("Olá " + nickName + "!\n\n");
-                    logged = true;
-                } else {
-                    System.out.println("Nickname já está sendo utilizado, tente outro: \n");
-                    java.io.DataInputStream segundaTentativa =new java.io.DataInputStream(System.in);
-                    nickName = in.readLine();
-                }
-            }
-
-            //            Recebendo o caminho da pasta compartilhada do cliente.
-            System.out.println("Qual o caminho da pasta compartilhada? :");
-            java.io.DataInputStream in2 =new java.io.DataInputStream(System.in);
-            String pathname = in2.readLine();
-
-            //            Enviando arquivos locais para o servidor.
-
-            FileManager fm = new FileManager(pathname);
-            transferImpl.enviarListaDeArquivos(nickName, fm.getFiles());
-
-            //            Recebendo a lista de todos os arquivos do servidor.
-
-            String[] arquivosDeOutrosClientes = transferImpl.requisitarListaDeArquivos(nickName);
-            if (arquivosDeOutrosClientes.length == 0) {
-                System.out.println("Não tem nenhum arquivo no servidor");
-            } else {
-                for (String arquivo: arquivosDeOutrosClientes) {
-                    String file = transferImpl.transfer(arquivo);
-                    System.out.println(file);
-                    fm.writeFileToFolder(file);
-                }
-            }
-
-            //            Fazer esperar pra sair
-
-            System.out.println("Digite S para sair do programa");
-            java.io.DataInputStream sair = new java.io.DataInputStream(System.in);
-            String c=in.readLine();
-
-            if(c.equalsIgnoreCase("s"))
-            {
-                transferImpl.logout(nickName);
-            }
-
         }
-        catch(Exception e)
-        {
-            System.out.println("error"+e);
-            e.printStackTrace(System.out);
+        catch(Exception e) {
+                System.out.println("error"+e);
+                e.printStackTrace(System.out);
         }
     }
+
+    public boolean verifyIfNickNameIsValid() {
+        boolean result = transferImpl.login(name);
+        if (result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void sendLocalFilesToCentralServer() {
+        transferImpl.enviarListaDeArquivos(name, fileManager.getFiles());
+    }
+
+    public void getFilesFromServer() {
+        String[] arquivosDeOutrosClientes = transferImpl.requisitarListaDeArquivos(name);
+        if (arquivosDeOutrosClientes.length == 0) {
+            System.out.println("Não tem nenhum arquivo no servidor");
+        } else {
+            for (String arquivo: arquivosDeOutrosClientes) {
+                String file = transferImpl.transfer(arquivo);
+                System.out.println(file);
+                try {
+                    fileManager.writeFileToFolder(file);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+        }
+    }
+
+    public void logout() {
+        transferImpl.logout(name);
+    }
 }
+

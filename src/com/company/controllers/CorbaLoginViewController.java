@@ -15,7 +15,7 @@ public class CorbaLoginViewController {
 
     public void create(){
         this.corbaLoginView.createScene();
-        this.corbaLoginView.createCorbaViewScene();
+        this.corbaLoginView.createCorbaViewScene(stage);
 
         this.stage.setTitle("Corba File Manager");
         this.stage.setScene(this.corbaLoginView.getScene());
