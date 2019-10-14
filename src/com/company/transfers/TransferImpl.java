@@ -1,11 +1,13 @@
 package com.company.transfers;
 
 import TransferApp.TransferPOA;
+import TransferApp.UserFiles;
 import org.omg.CORBA.ORB;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.Map;
 class TransferImpl extends TransferPOA
 {
     private ORB orb;
-    private Map<String,String[]> files = new HashMap<>();
+    private ArrayList<UserFiles> arrayDeUserFiles = new ArrayList<>();
     private ArrayList<String> clientesOnline = new ArrayList<>();
 
     public void setORB(ORB orb_val) {
@@ -48,8 +50,8 @@ class TransferImpl extends TransferPOA
 
     @Override
     public boolean enviarListaDeArquivos(String user, String[] list) {
-        files.put(user,list);
-        printMap();
+        UserFiles userFiles = new UserFiles(user, list);
+        arrayDeUserFiles.add(userFiles);
         return true;
     }
 
@@ -78,16 +80,14 @@ class TransferImpl extends TransferPOA
     }
 
     @Override
+    public UserFiles[] requisitarListaDeArquivosComUser() {
+        UserFiles[] castArrayDeUserFiles = new UserFiles[this.arrayDeUserFiles.toArray().length];
+        return arrayDeUserFiles.toArray(castArrayDeUserFiles);
+    }
+
+    @Override
     public String[] requisitarListaDeArquivos(String user) {
-        ArrayList<String> todosOsArquivos = new ArrayList<String>();
-        files.entrySet().forEach(entry->{
-            if (!entry.getKey().equalsIgnoreCase(user)) {
-                for (String path : files.get(entry.getKey())) {
-                    todosOsArquivos.add(path);
-                }
-            }
-        });
-        return getStringArray(todosOsArquivos);
+        return null;
     }
 
     public int getTotalOfClients() {
@@ -107,15 +107,6 @@ class TransferImpl extends TransferPOA
         }
 
         return str;
-    }
-
-    public void printMap() {
-        files.entrySet().forEach(entry->{
-            System.out.println(entry.getKey());
-            for (String path: files.get(entry.getKey())) {
-                System.out.println(path);
-            };
-        });
     }
 
     public void shutdown()

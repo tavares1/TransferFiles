@@ -60,16 +60,20 @@ public class TransferClient
     static Transfer transferImpl;
     static boolean logged = false;
     private String name;
+    private String[] files;
     private String folderPath;
     private FileManager fileManager;
+    private String clientPort;
 
-    public TransferClient(String nickname, String path) {
+    public TransferClient(String nickname, String path, String clientPort) {
         name = nickname;
         folderPath = path;
         fileManager = new FileManager(path);
+        this.clientPort = clientPort;
+        this.files = getFiles();
     }
 
-    public void connectWithCentralServer(String clientPort) {
+    public void connectWithCentralServer() {
         try {
             //            Conexão com o servidor central.
             String[] port = new String[]{"-ORBInitialPort", clientPort};
@@ -99,25 +103,26 @@ public class TransferClient
         transferImpl.enviarListaDeArquivos(name, fileManager.getFiles());
     }
 
-    public void getFilesFromServer() {
-        String[] arquivosDeOutrosClientes = transferImpl.requisitarListaDeArquivos(name);
+    public UserFiles[] getFilesFromServer() {
+        UserFiles[] arquivosDeOutrosClientes = transferImpl.requisitarListaDeArquivosComUser();
         if (arquivosDeOutrosClientes.length == 0) {
-            System.out.println("Não tem nenhum arquivo no servidor");
+            return null;
         } else {
-            for (String arquivo: arquivosDeOutrosClientes) {
-                String file = transferImpl.transfer(arquivo);
-                System.out.println(file);
-                try {
-                    fileManager.writeFileToFolder(file);
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-            }
+            return arquivosDeOutrosClientes;
         }
     }
 
     public void logout() {
         transferImpl.logout(name);
     }
+
+    public String[] getFiles() {
+         return fileManager.getFiles();
+    }
+
+    public String getName () {
+        return name;
+    }
+
 }
 
