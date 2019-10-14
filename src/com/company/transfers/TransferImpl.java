@@ -1,4 +1,4 @@
-package com.company;
+package com.company.transfers;
 
 import TransferApp.TransferPOA;
 import org.omg.CORBA.ORB;

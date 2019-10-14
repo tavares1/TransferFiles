@@ -1,10 +1,8 @@
-package com.company;
+package com.company.transfers;
 
 import TransferApp.Transfer;
 import TransferApp.TransferHelper;
-import TransferApp.TransferPOA;
 import org.omg.CosNaming.*;
-import org.omg.CosNaming.NamingContextPackage.*;
 import org.omg.CORBA.*;
 import org.omg.PortableServer.*;
 import org.omg.PortableServer.POA;

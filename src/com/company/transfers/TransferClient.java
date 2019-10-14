@@ -1,9 +1,8 @@
-package com.company;
+package com.company.transfers;
 
 import java.io.*;
 import java.lang.Object;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import TransferApp.*;
 import org.omg.CosNaming.*;
@@ -17,7 +16,7 @@ class FileManager {
     }
 
     private static ArrayList<String> listFilesForFolder(final File folder) {
-        ArrayList <String> filesNames = new ArrayList<String>();
+        ArrayList <String> filesNames = new ArrayList<>();
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory()) {
                 listFilesForFolder(fileEntry);
