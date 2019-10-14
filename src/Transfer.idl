@@ -2,6 +2,7 @@
 module TransferApp {
 
     typedef sequence<string> PathList;
+    typedef sequence<octet> Bytes;
 
     struct UserFiles {
         string name;
@@ -20,4 +21,8 @@ module TransferApp {
         PathList requisitarListaDeArquivos(in string user);
         oneway void shutdown();
     };
+
+    interface TransferP2P {
+        Bytes downloadFile(in string fileName);
+     };
  };

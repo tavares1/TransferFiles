@@ -18,6 +18,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.concurrent.Delayed;
 
 public class FileModalDownloadView {
 
@@ -47,16 +48,26 @@ public class FileModalDownloadView {
         Label fileLabel = new Label("Path do arquivo: ");
         Label pathFileLabel = new Label(model.getFileName());
 
+        Label downloadLabel = new Label("Status do Download: ");
+        Label downloadStatusLabel = new Label("Esperando algo para ser baixado...");
+
+
         Button btn = new Button("Baixar arquivo!");
         btn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 File file = new File(model.getFileName());
-                client.downloadFile(model.getFileName(), file.getName());
+                downloadStatusLabel.setText("Baixando...");
+                client.connectWithP2P(model.getOwner());
+                byte[] fileInByte = client.downloadToP2P(file.getName());
+                if (client.downloadFile(model.getFileName(), file.getName(), fileInByte)) {
+                    downloadStatusLabel.setText("Arquivo foi baixado com sucesso!");
+                }
             }
         });
 
-        VBox corbaScreen = new VBox(titleLabel,fileOwnerLabel,fileLabel,pathFileLabel, btn);
+
+        VBox corbaScreen = new VBox(titleLabel,fileOwnerLabel,fileLabel,pathFileLabel, btn, downloadLabel,downloadStatusLabel);
 
         corbaScreen.setAlignment(Pos.CENTER);
         this.pane.getChildren().add(corbaScreen);
