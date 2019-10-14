@@ -79,6 +79,14 @@ public class TransferFilesApp {
         this.tableViewServer.getColumns().add(tableViewColumnServer2);
 
 
+        tableViewServer.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                FileModel model = (FileModel) newValue;
+                FileModalDownloadViewController fileModalVC = new FileModalDownloadViewController(stage, client, model);
+                fileModalVC.create();
+            }
+        });
+
         updateTableWithFiles(client.getFilesFromServer());
 
         VBox vbox = new VBox(title, tableView, title2, boxDeAtualizacao, tableViewServer);
@@ -106,24 +114,8 @@ public class TransferFilesApp {
             System.out.println("Deu ruim");
             //tableViewServer.setPlaceholder(new Label("Nenhum arquivo para ser baixado."));
         }
-
-//        ADD EVENT LISTINER
-
-        tableViewServer.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                FileModel model = (FileModel) newValue;
-                FileModalDownloadViewController fileModalVC = new FileModalDownloadViewController(stage, client, model);
-                fileModalVC.create();
-            }
-        });
-
-        VBox vbox = new VBox(title,tableView,title2,tableViewServer);
-
-        vbox.prefWidthProperty().bind(stage.widthProperty().multiply(0.80));
-
-        this.pane.getChildren().add(vbox);
-
     }
+
 
 
     public void createScene(){
