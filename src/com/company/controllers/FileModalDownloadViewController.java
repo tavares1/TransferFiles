@@ -2,19 +2,18 @@ package com.company.controllers;
 
 import com.company.transfers.TransferClient;
 import com.company.views.FileModalDownloadView;
-import com.company.views.FileModel;
-import com.company.views.TransferFilesApp;
-import javafx.application.Platform;
-import javafx.stage.Modality;
+import com.company.models.FileModel;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class FileModalDownloadViewController {
     private Stage stage;
     private FileModalDownloadView fileModalDownloadView;
+    private TransferFilesAppViewController transferVC;
 
-    public FileModalDownloadViewController(Stage stage, TransferClient client, FileModel model){
+    public FileModalDownloadViewController(Stage stage, TransferClient client, FileModel model, TransferFilesAppViewController transferVC){
         this.fileModalDownloadView = new FileModalDownloadView(model, client);
+        this.transferVC = transferVC;
         this.stage = stage;
     }
 
@@ -29,6 +28,11 @@ public class FileModalDownloadViewController {
         mainStage.setTitle("Fazer download.");
         mainStage.setScene(this.fileModalDownloadView.getScene());
         mainStage.initStyle(StageStyle.DECORATED);
+        mainStage.setOnCloseRequest(event -> transferVC.reloadTableView() );
         mainStage.show();
+
     }
+
+
+
 }

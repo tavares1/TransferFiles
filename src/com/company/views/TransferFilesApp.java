@@ -1,8 +1,10 @@
 package com.company.views;
 
+import TransferApp.Transfer;
 import TransferApp.UserFiles;
-import com.company.controllers.TransferFilesAppViewController;
 import com.company.controllers.FileModalDownloadViewController;
+import com.company.controllers.TransferFilesAppViewController;
+import com.company.models.FileModel;
 import com.company.transfers.TransferClient;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -20,10 +22,13 @@ public class TransferFilesApp {
     private StackPane pane;
     private TransferClient client;
     private TableView tableViewServer;
+    private TableView tableView;
+    private TransferFilesAppViewController transferVC;
 
-    public TransferFilesApp(TransferClient client){
+    public TransferFilesApp(TransferClient client, TransferFilesAppViewController transferVC){
         this.client = client;
         this.pane = new StackPane();
+        this.transferVC = transferVC;
     }
 
     public void createCorbaViewScene(final Stage stage){
@@ -32,7 +37,7 @@ public class TransferFilesApp {
         client.sendLocalFilesToCentralServer();
 
         //Criando a primeira tableview que ficam os arquivos locais
-        TableView tableView = new TableView();
+        tableView = new TableView();
 
         TableColumn<String,FileModel> column1 = new TableColumn("Dono do Arquivo");
         column1.setCellValueFactory(new PropertyValueFactory<>("owner"));
@@ -82,7 +87,7 @@ public class TransferFilesApp {
         tableViewServer.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 FileModel model = (FileModel) newValue;
-                FileModalDownloadViewController fileModalVC = new FileModalDownloadViewController(stage, client, model);
+                FileModalDownloadViewController fileModalVC = new FileModalDownloadViewController(stage, client, model, transferVC);
                 fileModalVC.create();
             }
         });
@@ -101,6 +106,7 @@ public class TransferFilesApp {
     }
 
     private void updateTableWithFiles(UserFiles[] files){
+        this.tableViewServer.getItems().clear();
         if (client.getFilesFromServer() != null) {
             for (UserFiles userfiles: files) {
                 for (String pathOfFile: userfiles.files) {
@@ -116,14 +122,20 @@ public class TransferFilesApp {
         }
     }
 
-
-
     public void createScene(){
         this.scene = new Scene(this.pane, 1000,500);
     }
 
     public Scene getScene() {
         return scene;
+    }
+
+    public void reloadTableView() {
+        tableView.getItems().clear();
+        for (String fileName: client.getFiles()) {
+            FileModel file = new FileModel(client.getName(),fileName);
+            tableView.getItems().add(file);
+        }
     }
 
 }

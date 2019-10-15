@@ -1,10 +1,9 @@
 package com.company.views;
 
-import com.company.controllers.TransferFilesAppViewController;
+import com.company.models.FileModel;
 import com.company.transfers.TransferClient;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,12 +12,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.concurrent.Delayed;
 
 public class FileModalDownloadView {
 
@@ -62,6 +58,7 @@ public class FileModalDownloadView {
                 byte[] fileInByte = client.downloadToP2P(file.getName());
                 if (client.downloadFile(model.getFileName(), file.getName(), fileInByte)) {
                     downloadStatusLabel.setText("Arquivo foi baixado com sucesso!");
+
                 }
             }
         });

@@ -1,4 +1,4 @@
-package com.company.views;
+package com.company.models;
 
 public class FileModel {
     private String owner = null;

@@ -11,7 +11,7 @@ public class TransferFilesAppViewController {
     private TransferFilesApp transferFilesApp;
 
     public TransferFilesAppViewController(Stage stage, TransferClient client){
-        this.transferFilesApp = new TransferFilesApp(client);
+        this.transferFilesApp = new TransferFilesApp(client, this);
         this.stage = stage;
     }
 
@@ -23,6 +23,11 @@ public class TransferFilesAppViewController {
         this.stage.setTitle("Transfer File App");
         this.stage.setScene(this.transferFilesApp.getScene());
         this.stage.show();
+
+    }
+
+    public void reloadTableView() {
+        transferFilesApp.reloadTableView();
     }
 
 }
