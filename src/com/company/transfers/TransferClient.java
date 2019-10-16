@@ -1,67 +1,11 @@
 package com.company.transfers;
 
-import java.io.*;
-import java.lang.Object;
-import java.util.ArrayList;
-
 import TransferApp.*;
+import com.company.utils.FileManager;
 import org.omg.CosNaming.*;
 import org.omg.CORBA.*;
-import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
-
-class FileManager {
-    private File folder;
-
-    FileManager(String pathname) {
-        folder = new File(pathname);
-    }
-
-    private static ArrayList<String> listFilesForFolder(final File folder) {
-        ArrayList <String> filesNames = new ArrayList<>();
-        for (final File fileEntry : folder.listFiles()) {
-            if (fileEntry.isDirectory()) {
-                listFilesForFolder(fileEntry);
-            } else {
-                filesNames.add(fileEntry.toString());
-            }
-        }
-        return filesNames;
-    }
-
-    private static String[] getStringArray(ArrayList<String> arr)
-    {
-
-        String str[] = new String[arr.size()];
-
-        Object[] objArr = arr.toArray();
-
-        int i = 0;
-        for (Object obj : objArr) {
-            str[i++] = (String)obj;
-        }
-
-        return str;
-    }
-
-    public String[] getFiles() {
-        return getStringArray(listFilesForFolder(folder));
-    }
-
-    public void writeFileToFolder(String file, String filename, byte[] array)  {
-        try {
-            FileOutputStream fout = new FileOutputStream(folder+"/"+filename);
-            //Write the file contents to the new file created
-            fout.write(array);
-            fout.close();
-            System.out.println("Arquivo foi baixado com sucesso!");
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-    }
-}
 
 public class TransferClient
 {
@@ -142,12 +86,7 @@ public class TransferClient
     }
 
     public boolean verifyIfNickNameIsValid() {
-        boolean result = transferImpl.login(name);
-        if (result) {
-            return true;
-        } else {
-            return false;
-        }
+        return transferImpl.login(name);
     }
 
     public void sendLocalFilesToCentralServer() {

@@ -9,7 +9,6 @@ module TransferApp {
         PathList files;
     };
 
-
     typedef sequence<UserFiles> UsersWithFiles;
 
     interface Transfer {

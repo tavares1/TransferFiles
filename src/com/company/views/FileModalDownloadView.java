@@ -48,6 +48,8 @@ public class FileModalDownloadView {
         Label downloadStatusLabel = new Label("Esperando algo para ser baixado...");
 
 
+        Label bugsLabel = new Label("");
+
         Button btn = new Button("Baixar arquivo!");
         btn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -55,16 +57,19 @@ public class FileModalDownloadView {
                 File file = new File(model.getFileName());
                 downloadStatusLabel.setText("Baixando...");
                 client.connectWithP2P(model.getOwner());
-                byte[] fileInByte = client.downloadToP2P(file.getName());
-                if (client.downloadFile(model.getFileName(), file.getName(), fileInByte)) {
-                    downloadStatusLabel.setText("Arquivo foi baixado com sucesso!");
-
+                try {
+                    byte[] fileInByte = client.downloadToP2P(file.getName());
+                    if (client.downloadFile(model.getFileName(), file.getName(), fileInByte)) {
+                        downloadStatusLabel.setText("Arquivo foi baixado com sucesso!");
+                    }
+                } catch (Exception e) {
+                    bugsLabel.setText("O DONO DO ARQUIVO NÃO ESTÁ ONLINE, TENTE ATUALIZAR A LISTA DE ARQUIVOS.");
                 }
             }
         });
 
 
-        VBox corbaScreen = new VBox(titleLabel,fileOwnerLabel,fileLabel,pathFileLabel, btn, downloadLabel,downloadStatusLabel);
+        VBox corbaScreen = new VBox(titleLabel,fileOwnerLabel,fileLabel,pathFileLabel, btn, downloadLabel,downloadStatusLabel,bugsLabel);
 
         corbaScreen.setAlignment(Pos.CENTER);
         this.pane.getChildren().add(corbaScreen);

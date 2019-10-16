@@ -9,6 +9,7 @@ import com.company.transfers.TransferClient;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -36,10 +37,7 @@ public class TransferFilesApp {
         this.transferVC = transferVC;
     }
 
-    public void createCorbaViewScene(final Stage stage){
-
-        client.connectWithCentralServer();
-        client.sendLocalFilesToCentralServer();
+    public void createTransferFileAppScene(final Stage stage){
 
         //Criando a primeira tableview que ficam os arquivos locais
         tableView = new TableView();
@@ -107,10 +105,16 @@ public class TransferFilesApp {
         VBox vbox = new VBox(title, tableView, title2, boxDeAtualizacao, tableViewServer);
         vbox.prefWidthProperty().bind(stage.widthProperty().multiply(0.80));
         this.pane.getChildren().add(vbox);
+
+
+
+        stage.setOnCloseRequest(event -> client.logout() );
+
     }
 
     private UserFiles[] retrieveListFromServer(TransferClient client){
         UserFiles[] serverFiles = client.getFilesFromServer();
+        this.data.clear();
         setDataToPopulateTable(serverFiles);
         return serverFiles;
     }
@@ -124,29 +128,13 @@ public class TransferFilesApp {
                 }
             }
         }
+
         this.listOfFiles = new FilteredList(this.data, p -> true);
         this.tableViewServer.setItems(listOfFiles);
     }
 
-    private void updateTableWithFiles(UserFiles[] files){
-        this.tableViewServer.getItems().clear();
-        if (client.getFilesFromServer() != null) {
-            for (UserFiles userfiles: files) {
-                for (String pathOfFile: userfiles.files) {
-                    if (!userfiles.name.equalsIgnoreCase(client.getName())) {
-                        FileModel file = new FileModel(userfiles.name, pathOfFile);
-                        this.tableViewServer.getItems().add(file);
-                    }
-                }
-            }
-        } else {
-            System.out.println("Deu ruim");
-            //tableViewServer.setPlaceholder(new Label("Nenhum arquivo para ser baixado."));
-        }
-    }
-
     public void createScene(){
-        this.scene = new Scene(this.pane, 1000,500);
+        this.scene = new Scene(this.pane, 500,500);
     }
 
     public Scene getScene() {

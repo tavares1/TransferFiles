@@ -18,7 +18,7 @@ public class TransferFilesAppViewController {
 
     public void create(){
         this.transferFilesApp.createScene();
-        this.transferFilesApp.createCorbaViewScene(stage);
+        this.transferFilesApp.createTransferFileAppScene(stage);
 
         this.stage.setTitle("Transfer File App");
         this.stage.setScene(this.transferFilesApp.getScene());

@@ -2,6 +2,7 @@ package com.company.views;
 
 import com.company.controllers.TransferFilesAppViewController;
 import com.company.transfers.TransferClient;
+import com.company.utils.FileManager;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -48,11 +49,13 @@ public class CorbaLoginView {
         Label actualPath = new Label("C:/");
         Button chooseFolderButton = new Button("Selecionar a pasta compartilhada");
 
+        Label errorLabel = new Label();
+
         chooseFolderButton.setOnAction(event -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             File selectedDirectory = directoryChooser.showDialog(stage);
             if(selectedDirectory == null){
-                //No Directory selected
+
             }else{
                 System.out.println(selectedDirectory.getAbsolutePath());
                 actualPath.setText(selectedDirectory.getAbsolutePath());
@@ -65,6 +68,8 @@ public class CorbaLoginView {
         loginForm.add(porta, 1, 2);
         loginForm.add(chooseFolderButton, 0,3);
         loginForm.add(actualPath, 1,3);
+
+
         loginForm.setMinSize(400, 200);
         loginForm.setPadding(new Insets(10, 10, 10, 10));
         loginForm.setVgap(5);
@@ -72,13 +77,27 @@ public class CorbaLoginView {
 
         createClient = new Button("Create");
         createClient.setOnAction(event -> {
-            TransferClient client = new TransferClient(nickname.getText(), actualPath.getText(), porta.getText());
-            TransferFilesAppViewController transferVC = new TransferFilesAppViewController(stage, client);
-            transferVC.create();
+            try {
+                FileManager fm = new FileManager(actualPath.getText());
+                fm.getFiles();
+                TransferClient client = new TransferClient(nickname.getText(), actualPath.getText(), porta.getText());
+                client.connectWithCentralServer();
+                if (client.verifyIfNickNameIsValid()) {
+                    client.sendLocalFilesToCentralServer();
+                    TransferFilesAppViewController transferVC = new TransferFilesAppViewController(stage, client);
+                    transferVC.create();
+                } else {
+                    errorLabel.setText("Nome já está em uso, tente outro.");
+                }
+            } catch (Exception e) {
+                System.out.println(actualPath.getText());
+                System.out.println(e);
+                errorLabel.setText("A pasta precisa ter pelo menos 1 arquivo. Escolha outra.");
+            }
         });
 
         corbaScreen.setAlignment(Pos.CENTER);
-        corbaScreen.getChildren().addAll(title, loginForm, createClient);
+        corbaScreen.getChildren().addAll(title, loginForm, createClient, errorLabel);
         this.pane.getChildren().add(corbaScreen);
     }
 
