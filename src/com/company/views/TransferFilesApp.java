@@ -6,6 +6,9 @@ import com.company.controllers.FileModalDownloadViewController;
 import com.company.controllers.TransferFilesAppViewController;
 import com.company.models.FileModel;
 import com.company.transfers.TransferClient;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -24,6 +27,8 @@ public class TransferFilesApp {
     private TableView tableViewServer;
     private TableView tableView;
     private TransferFilesAppViewController transferVC;
+    private ObservableList<FileModel> data = FXCollections.observableArrayList();
+    private FilteredList<FileModel> listOfFiles;
 
     public TransferFilesApp(TransferClient client, TransferFilesAppViewController transferVC){
         this.client = client;
@@ -67,9 +72,14 @@ public class TransferFilesApp {
         refreshButton.setOnAction(event -> {
             retrieveListFromServer(this.client);
         });
+        TextField searchBox = new TextField();
+        searchBox.setPromptText("Procurar por nome do arquivo");
+        searchBox.setOnKeyReleased(event -> {
+            this.listOfFiles.setPredicate(p -> p.getFileName().toLowerCase().contains(searchBox.getText().toLowerCase().trim()));
+        });
         boxDeAtualizacao.setSpacing(20);
         boxDeAtualizacao.setPadding(new Insets(10,0,10,0));
-        boxDeAtualizacao.getChildren().addAll(refreshLabel, refreshButton);
+        boxDeAtualizacao.getChildren().addAll(refreshLabel, refreshButton, searchBox);
 
         this.tableViewServer = new TableView();
 
@@ -92,7 +102,7 @@ public class TransferFilesApp {
             }
         });
 
-        updateTableWithFiles(client.getFilesFromServer());
+        setDataToPopulateTable(client.getFilesFromServer());
 
         VBox vbox = new VBox(title, tableView, title2, boxDeAtualizacao, tableViewServer);
         vbox.prefWidthProperty().bind(stage.widthProperty().multiply(0.80));
@@ -101,8 +111,21 @@ public class TransferFilesApp {
 
     private UserFiles[] retrieveListFromServer(TransferClient client){
         UserFiles[] serverFiles = client.getFilesFromServer();
-        updateTableWithFiles(serverFiles);
+        setDataToPopulateTable(serverFiles);
         return serverFiles;
+    }
+
+    private void setDataToPopulateTable(UserFiles[] files){
+        for(UserFiles file: files){
+            for(String pathOfFile: file.files){
+                if(!file.name.equalsIgnoreCase(this.client.getName())){
+                    FileModel model = new FileModel(file.name, pathOfFile);
+                    this.data.add(model);
+                }
+            }
+        }
+        this.listOfFiles = new FilteredList(this.data, p -> true);
+        this.tableViewServer.setItems(listOfFiles);
     }
 
     private void updateTableWithFiles(UserFiles[] files){
